@@ -35,6 +35,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import com.soyaeeb.common.ErrorScreen
+import com.soyaeeb.common.LoadingScreen
+import com.soyaeeb.common.util.LoadingScreen
 import com.soyaeeb.model.entity.RepoItemApiEntity
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,24 +48,33 @@ fun RepoListScreen(
 ){
     val viewModel : RepoViewModel = hiltViewModel()
     val listState by viewModel.repoListState.collectAsState()
+    val visibleScreen by viewModel.visibleScreenState.collectAsState()
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "My Repo")}
+                title = { Text(text = "My Repos")}
             )
         }
     ) {
-        LazyColumn(
-            modifier = Modifier.padding(it)
-        ){
-            items(listState.repoList){ repo ->
-                RepoItem(
-                    repoItem = repo,
-                    onRepoItemClick = onRepoItemClick
-                )
-                Divider()
+        when(visibleScreen){
+            LoadingScreen.IDLE -> {}
+            LoadingScreen.LOADING -> LoadingScreen()
+            LoadingScreen.ERROR ->  ErrorScreen()
+            LoadingScreen.SUCCESS -> {
+                LazyColumn(
+                    modifier = Modifier.padding(it)
+                ){
+                    items(listState.repoList){ repo ->
+                        RepoItem(
+                            repoItem = repo,
+                            onRepoItemClick = onRepoItemClick
+                        )
+                        Divider()
+                    }
+                }
             }
         }
+
     }
 }
 

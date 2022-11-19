@@ -1,4 +1,5 @@
 import core.Dependencies
+import core.ModuleDep
 
 plugins {
     id("com.android.library")
@@ -74,4 +75,5 @@ dependencies {
     implementation(project(core.ModuleDep.domain))
     implementation(project(core.ModuleDep.data))
     implementation(project(core.ModuleDep.model))
+    implementation(project(ModuleDep.common))
 }

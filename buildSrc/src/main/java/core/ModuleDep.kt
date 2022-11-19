@@ -9,4 +9,5 @@ object ModuleDep{
     const val feature_repolist = ":feature-repolist"
     const val model = ":model"
     const val assets = ":assets"
+    const val common = ":common"
 }

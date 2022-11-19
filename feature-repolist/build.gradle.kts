@@ -78,4 +78,5 @@ dependencies {
     implementation(project(ModuleDep.data))
     implementation(project(ModuleDep.model))
     implementation(project(ModuleDep.assets))
+    implementation(project(ModuleDep.common))
 }

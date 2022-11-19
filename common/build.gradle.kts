@@ -1,3 +1,5 @@
+import core.ModuleDep
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -30,6 +32,12 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = core.Versions.compose_compiler
+    }
 }
 
 dependencies {
@@ -41,6 +49,7 @@ dependencies {
     implementation (core.Dependencies.compose_ui)
     implementation (core.Dependencies.compose_preview)
     implementation (core.Dependencies.compose_material3)
+    implementation(core.Dependencies.compose_navigation)
 
     // Test
     testImplementation (core.Dependencies.junit)

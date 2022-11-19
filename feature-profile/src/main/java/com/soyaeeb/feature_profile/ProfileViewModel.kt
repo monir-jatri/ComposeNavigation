@@ -2,6 +2,7 @@ package com.soyaeeb.feature_profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.soyaeeb.common.util.LoadingScreen
 import com.soyaeeb.domain.ApiResult
 import com.soyaeeb.domain.usecase.FetchProfileApiUseCase
 import com.soyaeeb.domain.usecase.FetchRepoListByUserUseCase
@@ -26,6 +27,9 @@ class ProfileViewModel @Inject constructor(
     private val _profileInfoState = MutableStateFlow(UiState.GetProfileInfoState(ProfileApiEntity()))
     val profileInfoState = _profileInfoState.asStateFlow()
 
+    private val _visibleScreenState = MutableStateFlow(LoadingScreen.IDLE)
+    val visibleScreenState = _visibleScreenState.asStateFlow()
+
     init {
         getProfileInfo()
     }
@@ -34,11 +38,12 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             fetchProfileApiUseCase.invoke(FetchProfileApiUseCase.Params("soyaeeb-monir")).collect{ apiResult ->
                 when(apiResult){
-                    is ApiResult.Loading -> {}
+                    is ApiResult.Loading -> _visibleScreenState.value = LoadingScreen.LOADING
                     is ApiResult.Success -> {
+                        _visibleScreenState.value = LoadingScreen.SUCCESS
                        _profileInfoState.value = UiState.GetProfileInfoState(apiResult.data)
                     }
-                    is ApiResult.Error -> {}
+                    is ApiResult.Error -> _visibleScreenState.value = LoadingScreen.ERROR
                 }
             }
         }

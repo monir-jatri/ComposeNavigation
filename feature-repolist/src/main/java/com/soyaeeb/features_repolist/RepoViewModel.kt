@@ -3,9 +3,11 @@ package com.soyaeeb.features_repolist
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.soyaeeb.common.util.LoadingScreen
 import com.soyaeeb.domain.ApiResult
 import com.soyaeeb.domain.usecase.FetchRepoListByUserUseCase
 import com.soyaeeb.model.entity.RepoItemApiEntity
+import dagger.hilt.android.internal.lifecycle.HiltWrapper_HiltViewModelFactory_ViewModelModule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,6 +33,9 @@ class RepoViewModel @Inject constructor(
     private val _repoListState = MutableStateFlow(UiState.GetRepoListState(emptyList()))
     val repoListState = _repoListState.asStateFlow()
 
+    private val _visibleScreenState = MutableStateFlow(LoadingScreen.IDLE)
+    val visibleScreenState = _visibleScreenState.asStateFlow()
+
     init {
         getRepoList()
     }
@@ -39,11 +44,12 @@ class RepoViewModel @Inject constructor(
         viewModelScope.launch {
             repoListUseCase.invoke(FetchRepoListByUserUseCase.Params("soyaeeb-monir")).collect{ apiResult ->
                 when(apiResult){
-                    is ApiResult.Loading -> {}
+                    is ApiResult.Loading -> _visibleScreenState.value = LoadingScreen.LOADING
                     is ApiResult.Success -> {
+                        _visibleScreenState.value = LoadingScreen.SUCCESS
                         _repoListState.value = UiState.GetRepoListState(apiResult.data)
                     }
-                    is ApiResult.Error -> {}
+                    is ApiResult.Error -> { _visibleScreenState.value = LoadingScreen.ERROR}
                 }
             }
         }
