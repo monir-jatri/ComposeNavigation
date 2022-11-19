@@ -1,21 +1,25 @@
+import core.Dependencies
+import core.ModuleDep
+import core.Versions
+
 plugins {
     id ("com.android.application")
     id ("org.jetbrains.kotlin.android")
-    //id ("dagger.hilt.android.plugin")
+    id ("dagger.hilt.android.plugin")
     kotlin("kapt")
 }
 
 android {
     namespace = "com.soyaeeb.composenavigation"
 
-    compileSdk = 33
+    compileSdk = AppConfig.compileSdkVersion
 
     defaultConfig {
-        applicationId = "com.soyaeeb.composenavigation"
-        minSdk = 21
-        targetSdk =  33
-        versionCode = 1
-        versionName = "1.0.0"
+        applicationId = AppConfig.applicationId
+        minSdk = AppConfig.minSdkVersion
+        targetSdk = AppConfig.targetSdkVersion
+        versionCode = AppConfig.versionCode
+        versionName = AppConfig.versionName
 
         testInstrumentationRunner  = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -25,12 +29,6 @@ android {
     buildTypes {
         debug {
             getByName("debug"){
-                isMinifyEnabled = true
-                proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            }
-        }
-        release {
-            getByName("release"){
                 isMinifyEnabled = true
                 proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             }
@@ -47,7 +45,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.3.1"
+        kotlinCompilerExtensionVersion = Versions.compose_compiler
     }
     packagingOptions {
         resources {
@@ -57,18 +55,36 @@ android {
 }
 
 dependencies {
-    implementation ("androidx.core:core-ktx:1.9.0")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.5.1")
-    implementation ("androidx.activity:activity-compose:1.6.1")
-    implementation ("androidx.compose.ui:ui:1.3.1")
-    implementation ("androidx.compose.ui:ui-tooling-preview:1.3.1")
-    implementation ("androidx.compose.material3:material3:1.1.0-alpha02")
-    testImplementation ("junit:junit:4.13.2")
-    androidTestImplementation ("androidx.test.ext:junit:1.1.4")
-    androidTestImplementation ("androidx.test.espresso:espresso-core:3.5.0")
-    androidTestImplementation ("androidx.compose.ui:ui-test-junit4:1.3.1")
-    debugImplementation ("androidx.compose.ui:ui-tooling:1.3.1")
-    debugImplementation ("androidx.compose.ui:ui-test-manifest:1.3.1")
+    // Core
+    implementation (Dependencies.core_ktx)
+    implementation(Dependencies.runtime_ktx)
+    implementation (Dependencies.androidx_lifecycle)
+    implementation (Dependencies.app_compact)
+    implementation (Dependencies.compose_foundation)
+    implementation (Dependencies.compose_runtime)
+    implementation (Dependencies.activity_compose)
+    implementation (Dependencies.compose_ui)
+    implementation (Dependencies.compose_preview)
+    implementation (Dependencies.compose_material3)
+    implementation(Dependencies.compose_navigation)
+
+    // hilt
+    implementation(Dependencies.hilt_android)
+    implementation(Dependencies.hilt_navigation_compose)
+    kapt(Dependencies.hilt_android_compiler_kapt)
+
+    // Test
+    testImplementation (Dependencies.junit)
+    androidTestImplementation (Dependencies.junit_ext)
+    androidTestImplementation (Dependencies.espresso)
+    androidTestImplementation (Dependencies.compose_ui_test_junit)
+    debugImplementation (Dependencies.debug_compose_ui)
+    debugImplementation (Dependencies.compose_ui_test_manifest)
+
+    implementation(project(ModuleDep.data))
+    implementation(project(ModuleDep.domain))
+    implementation(project(ModuleDep.feature_repolist))
+    implementation(project(ModuleDep.feature_profile))
 }
 
 kapt {
